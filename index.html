@@ -14,30 +14,36 @@
     <tr>
         <th>Name</th>
         <th>Price</th>
-        <th>Description</th>
     </tr>
     <tr v-for="item in items">
-        <td>{{ item.name }}</td>
-        <td>{{ item.price }}</td>
-        <td>{{ item.desc }}</td>
+        <td @click="getItem(item.id)">{{ item.name }}</td>
+        <td @click="getItem(item.id)">{{ item.price }}</td>
     </tr>
     </table>
+    <div id="itemInfoModal" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                <tr><th>Name</th><td>{{itemInModal.name}}</td></tr>
+                <tr><th>Price</th><td>{{itemInModal.price}}</td></tr>
+                <tr><th>Description</th><td>{{itemInModal.desc}}</td></tr>
+            </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
 </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue@3.2.31/dist/vue.global.js"></script>
-    <script>
-        const vue = Vue.createApp({
-            data() {
-                return {
-                    items: []
-                }
-            },
-            async created(){
-                this.items = await (await fetch('http://localhost:8080/items')).json();
-            }
-        }).mount('#app')
-    </script>
+    <script src="rest-client.js"></script>
 </body>
 </html>
