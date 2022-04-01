@@ -41,8 +41,8 @@
                             <input type="password" class="form-control" v-model="loginModal.password">
                             <label data-success="right">Password</label>
                         </div>
-
                     </div>
+                    <div class="text-center"><p> {{ loginError }} </p></div>
                     <div class="modal-footer d-flex justify-content-center">
                         <button @click="login()" class="btn btn-primary">Login</button>
                     </div>
@@ -122,8 +122,23 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button id="deleteBtn" type="button" class="btn btn-danger" style="display: none">Delete listing</button>
+                    <button id="deleteBtn" type="button" class="btn btn-danger" style="display: none" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete listing</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="deleteModal" class="modal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                </div>
+                <div class="modal-body">
+                    <h3>Proceed to delete the listing?</h3>
+                </div>
+                <div class="modal-footer">
+                    <button @click="deleteItem(id)" class="btn btn-danger">Proceed</button>
+                    <button type="button" class="btn btn-secondary" data-bs-target="#itemInfoModal" data-bs-toggle="modal">Back</button>
                 </div>
             </div>
         </div>

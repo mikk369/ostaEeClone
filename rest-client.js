@@ -6,7 +6,8 @@ const vue = Vue.createApp({
             addModal: {},
             admin: false,
             loginModal: {},
-            loginError: ""
+            loginError: "",
+            activeId: null
         }
     },
     async created() {
@@ -23,6 +24,7 @@ const vue = Vue.createApp({
             this.itemInModal = await (await fetch(`http://localhost:8080/items/${id}`)).json()
             let itemInfoModal = new bootstrap.Modal(document.getElementById('itemInfoModal'), {})
             itemInfoModal.show()
+            this.activeId = id
         },
         addItem: async function () {
             const newItem = {
@@ -39,7 +41,6 @@ const vue = Vue.createApp({
             }).then(response => { this.items.push(newItem) })
         },
         login: async function () {
-            console.log("hi2")
             const details = {
                 username: this.loginModal.username,
                 password: this.loginModal.password
@@ -65,8 +66,15 @@ const vue = Vue.createApp({
                 headers: {
                     "Content-Type": "application/json"
                 }
-            })
-                .then(window.location.reload());
-        }
+            }).then(window.location.reload());
+        },
+        deleteItem: async function(){
+            await fetch("http://localhost:8080/items/" + this.activeId, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+            },
+        }).then(window.location.reload());
+        },
     }
 }).mount('#app')

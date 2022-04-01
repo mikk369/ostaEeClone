@@ -46,7 +46,6 @@ app.get('/power', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-    console.log("hi")
     if (req.body.username == details.username && req.body.password == details.password) {
         powers = true
         res.send("true")
@@ -57,6 +56,14 @@ app.post('/login', (req, res) => {
  app.post('/logout', (req, res) => {
     powers = false
 })
+
+app.delete('/items/:id', (req, res) => {
+    if (typeof items[req.params.id - 1] === 'undefined') {
+        return res.status(404).send({error: "Item not found"})
+    }
+    items.splice(req.params.id - 1, 1)
+    res.status(204).send({error: "No Content"})
+ });
 
 app.listen(8080, () => {
     console.log(`API up at: http://localhost:8080`)
