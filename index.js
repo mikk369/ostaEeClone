@@ -4,12 +4,17 @@ const app = express();
 
 app.use(cors());
 app.use(express.json())
-
-const items = [
+var items = [
     { id: 1, name: "Tool", price: "6.99", description: "Tammepuidust tool" },
     { id: 2, name: "Kapp", price: "15.55", description: "Vanamoodne kapp" },
     { id: 3, name: "Laud", price: "59.99", description: "Led-gamer desk" },
 ]
+const details = {
+    username: "admin",
+    password: "123"
+}
+
+var powers = false
 
 app.get('/items', (req, res) => {
     res.send(items)
@@ -34,6 +39,23 @@ app.post('/items', (req, res) => {
     }
     items.push(newItem)
     res.status(201).send(items)
+})
+
+app.get('/power', (req, res) => {
+    res.send(powers)
+})
+
+app.post('/login', (req, res) => {
+    console.log("hi")
+    if (req.body.username == details.username && req.body.password == details.password) {
+        powers = true
+        res.send("true")
+    } else
+        res.send({ error: "wrong username or password" })
+})
+
+ app.post('/logout', (req, res) => {
+    powers = false
 })
 
 app.listen(8080, () => {

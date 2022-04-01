@@ -3,11 +3,20 @@ const vue = Vue.createApp({
         return {
             itemInModal: { name: null },
             items: [],
-            addModal: {}
+            addModal: {},
+            admin: false,
+            loginModal: {},
+            loginError: ""
         }
     },
     async created() {
         this.items = await (await fetch('http://localhost:8080/items')).json();
+        this.admin = await (await fetch('http://localhost:8080/power')).json();
+        if (this.admin == true) {
+            document.querySelector("#login").style.display = "none";
+            document.querySelector("#logout").style.display = "";
+            document.querySelector("#deleteBtn").style.display = "";
+        }
     },
     methods: {
         getItem: async function (id) {
@@ -21,14 +30,43 @@ const vue = Vue.createApp({
                 price: this.addModal.price,
                 description: this.addModal.description
             }
-            console.log(newItem)
             await fetch("http://localhost:8080/items", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(newItem)
-            }).then(response => {this.items.push(newItem)})
+            }).then(response => { this.items.push(newItem) })
+        },
+        login: async function () {
+            console.log("hi2")
+            const details = {
+                username: this.loginModal.username,
+                password: this.loginModal.password
+            }
+            await fetch("http://localhost:8080/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(details)
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.error)
+                        this.loginError = data.error;
+                    if (data == true) {
+                        window.location.reload()
+                    }
+                });
+        },
+        logout: async function() {
+            await fetch("http://localhost:8080/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(window.location.reload());
         }
     }
 }).mount('#app')
