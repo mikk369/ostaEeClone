@@ -39,6 +39,9 @@ const vue = Vue.createApp({
                 },
                 body: JSON.stringify(newItem)
             }).then(response => { this.items.push(newItem) })
+            .then(() => {
+                window.location.reload();
+            })
         },
         login: async function () {
             const details = {
@@ -66,15 +69,19 @@ const vue = Vue.createApp({
                 headers: {
                     "Content-Type": "application/json"
                 }
-            }).then(window.location.reload());
+            }).then(() => {
+                window.location.reload();
+            })
         },
-        deleteItem: async function(){
+        deleteItem: async function() {
             await fetch("http://localhost:8080/items/" + this.activeId, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json"
             },
-        }).then(window.location.reload());
+        }).then(() => {
+            window.location.reload();
+        })
         },
     }
 }).mount('#app')

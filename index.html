@@ -93,7 +93,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button @click="addItem()" class="btn btn-success">List the item</button>
+                            <button type="button" @click="addItem()" class="btn btn-success">List the item</button>
                     </form>
                 </div>
             </div>
@@ -137,7 +137,7 @@
                     <h3>Proceed to delete the listing?</h3>
                 </div>
                 <div class="modal-footer">
-                    <button @click="deleteItem(id)" class="btn btn-danger">Proceed</button>
+                    <button type="button" @click="deleteItem(id)" class="btn btn-danger">Proceed</button>
                     <button type="button" class="btn btn-secondary" data-bs-target="#itemInfoModal" data-bs-toggle="modal">Back</button>
                 </div>
             </div>

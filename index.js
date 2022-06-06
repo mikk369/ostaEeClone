@@ -57,13 +57,23 @@ app.post('/login', (req, res) => {
     powers = false
 })
 
-app.delete('/items/:id', (req, res) => {
-    if (typeof items[req.params.id - 1] === 'undefined') {
-        return res.status(404).send({error: "Item not found"})
-    }
+ app.delete('/items/:id', (req, res) => {
     items.splice(req.params.id - 1, 1)
-    res.status(204).send({error: "No Content"})
- });
+    var item_id = (req.params.id -1);
+    var copy_list = [];
+    items.forEach(item => {
+        if (item.id !== item_id +1)
+            copy_list.push(item)
+    })
+    items = copy_list
+
+    var i = 1
+    items.forEach(item => {
+        item.id = i
+        i += 1
+    })
+    res.send("200")
+})
 
 app.listen(8080, () => {
     console.log(`API up at: http://localhost:8080`)
