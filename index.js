@@ -75,6 +75,14 @@ app.post('/login', (req, res) => {
     res.send("200")
 })
 
+ app.put("/items/:id", (req, res) => {
+    items[req.params.id -1].name = req.body.name
+    items[req.params.id -1].price = req.body.price
+    items[req.params.id -1].description = req.body.description
+
+    res.send("200")
+})
+
 app.listen(8080, () => {
     console.log(`API up at: http://localhost:8080`)
 })

@@ -4,6 +4,7 @@ const vue = Vue.createApp({
             itemInModal: { name: null },
             items: [],
             addModal: {},
+            updateModal: {},
             admin: false,
             loginModal: {},
             loginError: "",
@@ -17,6 +18,7 @@ const vue = Vue.createApp({
             document.querySelector("#login").style.display = "none";
             document.querySelector("#logout").style.display = "";
             document.querySelector("#deleteBtn").style.display = "";
+            document.querySelector("#updateBtn").style.display = "";
         }
     },
     methods: {
@@ -69,9 +71,7 @@ const vue = Vue.createApp({
                 headers: {
                     "Content-Type": "application/json"
                 }
-            }).then(() => {
-                window.location.reload();
-            })
+            }).then(window.location.reload())
         },
         deleteItem: async function() {
             await fetch("http://localhost:8080/items/" + this.activeId, {
@@ -79,6 +79,30 @@ const vue = Vue.createApp({
                 headers: {
                     "Content-Type": "application/json"
             },
+        }).then(() => {
+            window.location.reload();
+        })
+        },
+        updateItem: async function() {
+            this.updateModal.name = this.items[this.activeId - 1].name
+            this.updateModal.price = this.items[this.activeId - 1].price
+            this.updateModal.description = this.items[this.activeId - 1].description
+        },
+        finalUpdate: async function() {
+            var itemName = this.updateModal.name
+            var itemPrice = this.updateModal.price
+            var itemDescription = this.updateModal.description
+            await fetch("http://localhost:8080/items/" + this.activeId, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                activeId: this.activeId,
+                name: itemName,
+                price: itemPrice,
+                description: itemDescription
+            })
         }).then(() => {
             window.location.reload();
         })
