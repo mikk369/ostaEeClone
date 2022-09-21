@@ -40,9 +40,6 @@ const vue = Vue.createApp({
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(newItem)
-            }).then(response => { this.items.push(newItem) })
-            .then(() => {
-                window.location.reload();
             })
         },
         login: async function () {
@@ -65,7 +62,7 @@ const vue = Vue.createApp({
                     }
                 });
         },
-        logout: async function() {
+        logout: async function () {
             await fetch("http://localhost:8080/logout", {
                 method: "POST",
                 headers: {
@@ -73,22 +70,26 @@ const vue = Vue.createApp({
                 }
             }).then(window.location.reload())
         },
-        deleteItem: async function() {
+        deleteItem: async function () {
             await fetch("http://localhost:8080/items/" + this.activeId, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json"
-            },
-        }).then(() => {
-            window.location.reload();
-        })
+                },
+            })
         },
-        updateItem: async function() {
+        removeItem: function (id) {
+            this.items.splice(id - 1, 1)
+            for (let i = 0; i < this.items.length; i++) {
+                this.items[i].id = i + 1
+            }
+        },
+        updateItem: async function () {
             this.updateModal.name = this.items[this.activeId - 1].name
             this.updateModal.price = this.items[this.activeId - 1].price
             this.updateModal.description = this.items[this.activeId - 1].description
         },
-        finalUpdate: async function() {
+        finalUpdate: async function () {
             var itemName = this.updateModal.name
             var itemPrice = this.updateModal.price
             var itemDescription = this.updateModal.description
@@ -96,16 +97,38 @@ const vue = Vue.createApp({
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                activeId: this.activeId,
-                name: itemName,
-                price: itemPrice,
-                description: itemDescription
+                },
+                body: JSON.stringify({
+                    activeId: this.activeId,
+                    name: itemName,
+                    price: itemPrice,
+                    description: itemDescription
+                })
             })
-        }).then(() => {
-            window.location.reload();
-        })
+        },
+        insertItem: function (itemData) {
+
+            if (itemData.id > this.items.length) {
+                let newItem = JSON.parse(itemData)
+                this.items.push(newItem)
+            } else {
+                itemData = JSON.parse(itemData)
+                this.items[itemData.id - 1] = itemData
+
+            }
         },
     }
 }).mount('#app')
+
+const connection = new WebSocket("ws://localhost:8080/")
+connection.onmessage = function (event) {
+    console.log(event.data)
+    if (event.data.action == "edit") {
+        vue.insertItem(event.data.data)
+    }
+    if (event.data.length > 3) {
+        vue.insertItem(event.data)
+    } else {
+        vue.removeItem(event.data)
+    }
+}

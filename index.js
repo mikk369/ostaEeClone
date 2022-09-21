@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+let expressWs = require('express-ws')(app)
 
 app.use(cors());
 app.use(express.json())
@@ -15,6 +16,13 @@ const details = {
 }
 
 var powers = false
+
+
+app.ws('/', function(ws, req) {
+    ws.on('message', function(msg) {
+        expressWs.getWss().clients.forEach(client => client.send(msg));
+    });
+})
 
 app.get('/items', (req, res) => {
     res.send(items)
@@ -38,6 +46,7 @@ app.post('/items', (req, res) => {
         description: req.body.description
     }
     items.push(newItem)
+    expressWs.getWss().clients.forEach(client => client.send(JSON.stringify(newItem)))
     res.status(201).send(items)
 })
 
@@ -72,6 +81,7 @@ app.post('/login', (req, res) => {
         item.id = i
         i += 1
     })
+    expressWs.getWss().clients.forEach(client => client.send(req.params.id));
     res.send("200")
 })
 
@@ -80,6 +90,7 @@ app.post('/login', (req, res) => {
     items[req.params.id -1].price = req.body.price
     items[req.params.id -1].description = req.body.description
 
+    expressWs.getWss().clients.forEach(client => client.send(JSON.stringify({action: "edit", data: req.body})))
     res.send("200")
 })
 
