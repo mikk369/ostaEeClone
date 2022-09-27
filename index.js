@@ -46,7 +46,7 @@ app.post('/items', (req, res) => {
         description: req.body.description
     }
     items.push(newItem)
-    expressWs.getWss().clients.forEach(client => client.send(JSON.stringify(newItem)))
+    expressWs.getWss().clients.forEach(client => client.send(JSON.stringify({action: "new", dd: newItem})))
     res.status(201).send(items)
 })
 
@@ -90,7 +90,7 @@ app.post('/login', (req, res) => {
     items[req.params.id -1].price = req.body.price
     items[req.params.id -1].description = req.body.description
 
-    expressWs.getWss().clients.forEach(client => client.send(JSON.stringify({action: "edit", data: req.body})))
+    expressWs.getWss().clients.forEach(client => client.send(JSON.stringify({action: "edit", dd: req.body})))
     res.send("200")
 })
 

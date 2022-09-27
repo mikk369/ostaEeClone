@@ -99,7 +99,7 @@ const vue = Vue.createApp({
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    activeId: this.activeId,
+                    id: this.activeId,
                     name: itemName,
                     price: itemPrice,
                     description: itemDescription
@@ -107,27 +107,21 @@ const vue = Vue.createApp({
             })
         },
         insertItem: function (itemData) {
-
-            if (itemData.id > this.items.length) {
-                let newItem = JSON.parse(itemData)
-                this.items.push(newItem)
-            } else {
-                itemData = JSON.parse(itemData)
-                this.items[itemData.id - 1] = itemData
-
-            }
+            this.items.push(itemData)
         },
+        modifyItem: function (itemData) {
+            this.items[itemData.id - 1] = itemData
+        }
     }
 }).mount('#app')
 
 const connection = new WebSocket("ws://localhost:8080/")
 connection.onmessage = function (event) {
-    console.log(event.data)
-    if (event.data.action == "edit") {
-        vue.insertItem(event.data.data)
-    }
-    if (event.data.length > 3) {
-        vue.insertItem(event.data)
+    let updateData = JSON.parse(event.data)
+    if (updateData.action == "edit") {
+        vue.modifyItem(updateData.dd)
+    } else if (updateData.action == "new") {
+        vue.insertItem(updateData.dd)
     } else {
         vue.removeItem(event.data)
     }
