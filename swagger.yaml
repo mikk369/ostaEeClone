@@ -1,0 +1,118 @@
+openapi: 3.0.2
+info:
+  title: ostaEePlatform
+  version: 1.0.0
+paths:
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              example:
+                name: admin
+                password: '123'
+      responses:
+        '401':
+          description: wrong username or password
+  /users/logout:
+    post:
+      tags:
+        - users
+      summary: Logout a user
+      responses:
+  /items:
+    get:
+      summary: Returns list of items
+      tags: [items]
+      responses:
+        200:
+          description: list of the items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/items'
+    post:
+      summary: add new items
+      tags: [items]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/items'
+      responses:
+        '201':
+          description: item added
+        '404':
+          description: Items not found
+  /items/{id}:
+    get:
+      summary: get items by id
+      tags: [items]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the item
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: number
+                name: string
+                price: number
+                description: string
+            example:
+              id: 1
+              name: Tool
+              price: 6.99
+              description: Tammepuidust tool
+      responses:
+        '200':
+          description: OK items found
+        '404':
+          description: Items not found
+    delete:
+      summary: deletes items from db
+      tags: [items]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: item deleted
+components:
+  schemas:
+    items:
+      title: Root Type for items
+      description: ''
+      type: array
+      items:
+        $ref: '#/components/schemas/items'
+      example:
+        id: 1
+        name: 'Tool'
+        price: 6.99
+        description: Tammepuidust tool
