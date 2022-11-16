@@ -1,8 +1,17 @@
+const https = require('https');
+const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 const app = express();
-let expressWs = require('express-ws')(app)
-
+const port = 8080
+const httpsServer = https.createServer({
+    key: fs.readFileSync("key.pem"),
+    cert: fs.readFileSync("cert.pem")
+    },
+    app).listen(port, () => {
+        console.log(`API up at: https://localhost:${port}`)
+});
+var expressWs = require('express-ws')(app, httpsServer)
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 app.use(cors());
@@ -19,12 +28,11 @@ const details = {
 
 var powers = false
 
-
-app.ws('/', function(ws, req) {
-    ws.on('message', function(msg) {
+app.ws('/', function (ws, req) {
+    ws.on('message', function (msg) {
         expressWs.getWss().clients.forEach(client => client.send(msg));
     });
-})
+});
 
 app.get('/items', async (req, res) => {
     await delay(3000)
@@ -95,8 +103,4 @@ app.post('/login', (req, res) => {
 
     expressWs.getWss().clients.forEach(client => client.send(JSON.stringify({action: "edit", dd: req.body})))
     res.send("200")
-})
-
-app.listen(8080, () => {
-    console.log(`API up at: http://localhost:8080`)
 })

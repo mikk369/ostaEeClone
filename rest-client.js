@@ -12,9 +12,9 @@ const vue = Vue.createApp({
         }
     },
     async created() {
-        this.items = await (await fetch('http://localhost:8080/items')).json();
+        this.items = await (await fetch('https://localhost:8080/items')).json();
         localStorage.setItem('items', JSON.stringify(this.items))
-        this.admin = await (await fetch('http://localhost:8080/power')).json();
+        this.admin = await (await fetch('https://localhost:8080/power')).json();
         if (this.admin == true) {
             document.querySelector("#login").style.display = "none";
             document.querySelector("#logout").style.display = "";
@@ -24,7 +24,7 @@ const vue = Vue.createApp({
     },
     methods: {
         getItem: async function (id) {
-            this.itemInModal = await (await fetch(`http://localhost:8080/items/${id}`)).json()
+            this.itemInModal = await (await fetch(`https://localhost:8080/items/${id}`)).json()
             let itemInfoModal = new bootstrap.Modal(document.getElementById('itemInfoModal'), {})
             itemInfoModal.show()
             this.activeId = id
@@ -35,7 +35,7 @@ const vue = Vue.createApp({
                 price: this.addModal.price,
                 description: this.addModal.description
             }
-            await fetch("http://localhost:8080/items", {
+            await fetch("https://localhost:8080/items", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -48,7 +48,7 @@ const vue = Vue.createApp({
                 username: this.loginModal.username,
                 password: this.loginModal.password
             }
-            await fetch("http://localhost:8080/login", {
+            await fetch("https://localhost:8080/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -64,7 +64,7 @@ const vue = Vue.createApp({
                 });
         },
         logout: async function () {
-            await fetch("http://localhost:8080/logout", {
+            await fetch("https://localhost:8080/logout", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -72,7 +72,7 @@ const vue = Vue.createApp({
             }).then(window.location.reload())
         },
         deleteItem: async function () {
-            await fetch("http://localhost:8080/items/" + this.activeId, {
+            await fetch("https://localhost:8080/items/" + this.activeId, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json"
@@ -95,7 +95,7 @@ const vue = Vue.createApp({
             var itemName = this.updateModal.name
             var itemPrice = this.updateModal.price
             var itemDescription = this.updateModal.description
-            await fetch("http://localhost:8080/items/" + this.activeId, {
+            await fetch("https://localhost:8080/items/" + this.activeId, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -119,7 +119,7 @@ const vue = Vue.createApp({
     }
 }).mount('#app')
 
-const connection = new WebSocket("ws://localhost:8080/")
+const connection = new WebSocket("wss://localhost:8080/")
 connection.onmessage = function (event) {
     let updateData = JSON.parse(event.data)
     if (updateData.action == "edit") {
