@@ -5,22 +5,18 @@ const vue = Vue.createApp({
             items: JSON.parse(localStorage.getItem('items')),
             addModal: {},
             updateModal: {},
-            admin: false,
             loginModal: {},
             loginError: "",
             activeId: null
         }
     },
     async created() {
-        this.items = await (await fetch('https://localhost:8080/items')).json();
-        localStorage.setItem('items', JSON.stringify(this.items))
-        this.admin = await (await fetch('https://localhost:8080/power')).json();
-        if (this.admin == true) {
-            document.querySelector("#login").style.display = "none";
-            document.querySelector("#logout").style.display = "";
-            document.querySelector("#deleteBtn").style.display = "";
-            document.querySelector("#updateBtn").style.display = "";
+        try{ 
+            this.items = await (await fetch('https://localhost:8080/items')).json();}
+        catch(error){
+            alert("Something went wrong " + error)
         }
+        localStorage.setItem('items', JSON.stringify(this.items))
     },
     methods: {
         getItem: async function (id) {
@@ -42,34 +38,6 @@ const vue = Vue.createApp({
                 },
                 body: JSON.stringify(newItem)
             })
-        },
-        login: async function () {
-            const details = {
-                username: this.loginModal.username,
-                password: this.loginModal.password
-            }
-            await fetch("https://localhost:8080/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(details)
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.error)
-                        this.loginError = data.error;
-                    if (data == true) {
-                        window.location.reload()
-                    }
-                });
-        },
-        logout: async function () {
-            await fetch("https://localhost:8080/logout", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            }).then(window.location.reload())
         },
         deleteItem: async function () {
             await fetch("https://localhost:8080/items/" + this.activeId, {
@@ -115,6 +83,64 @@ const vue = Vue.createApp({
         modifyItem: function (itemData) {
             this.items[itemData.id - 1] = itemData
             localStorage.setItem('items', JSON.stringify(this.items))
+        },
+        login: async function(){
+            this.username = this.loginModal.username,
+            this.password = this.loginModal.password
+            const loginRequest = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: this.username,
+                    password: this.password
+                })
+
+            };
+            await fetch("https://localhost:8080/sessions", loginRequest)
+                .then(response => response.json())
+                .then(data => {
+                    let signInMsg = document.getElementById("si-error-msg")
+                    if (data.error){
+                        signInMsg.textContent = (data.error)
+                    } else {
+                        console.log(data)
+                        localStorage.setItem('sessionId', data.sessionId)
+                        localStorage.setItem('isAdmin', data.isAdmin)
+                        localStorage.setItem('username', this.username)
+                        document.getElementById("login").style.display = "none"
+                        document.getElementById("logout").style.display = ""
+                        document.getElementById('deleteBtn').style.display = ""
+                        document.getElementById('updateBtn').style.display = ""
+                    } 
+                })
+        },
+        logout: async function(){
+            const logoutRequest = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    sessionId: localStorage.getItem('sessionId'),
+                    username: localStorage.getItem('username')
+                }) 
+            }
+            await fetch("https://localhost:8080/logout", logoutRequest)
+            .then(response => response.json())
+            .then(data => {
+                const signOutMsg = document.getElementById("so-error-msg")
+                if (data.error) {
+                    signOutMsg.textContent = (data.error)
+                } else {
+                    document.getElementById("login").style.display = ""
+                    document.getElementById("logout").style.display = "none"
+                    document.getElementById('deleteBtn').style.display = "none"
+                    document.getElementById('updateBtn').style.display = "none"
+                    localStorage.clear()
+                }
+            })
         }
     }
 }).mount('#app')

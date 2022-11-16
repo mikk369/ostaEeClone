@@ -10,9 +10,15 @@ This website is a primitive clone of the website Osta.ee . The website is made p
 
 - [OpenSSL](https://slproweb.com/products/Win32OpenSSL.html)
 
-* Download dependencies: npm install
+To download dependencies:
+```
+npm install
+```
 
-* To run your server: node index.js
+To run your server:
+```
+node index.js
+```
 
 ## HTTPS SSL certificate generation:
 ### 📝 Creating an SSL Certificate
