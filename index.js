@@ -3,6 +3,8 @@ const cors = require('cors');
 const app = express();
 let expressWs = require('express-ws')(app)
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 app.use(cors());
 app.use(express.json())
 var items = [
@@ -24,7 +26,8 @@ app.ws('/', function(ws, req) {
     });
 })
 
-app.get('/items', (req, res) => {
+app.get('/items', async (req, res) => {
+    await delay(3000)
     res.send(items)
 })
 

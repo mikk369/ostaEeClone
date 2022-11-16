@@ -2,7 +2,7 @@ const vue = Vue.createApp({
     data() {
         return {
             itemInModal: { name: null },
-            items: [],
+            items: JSON.parse(localStorage.getItem('items')),
             addModal: {},
             updateModal: {},
             admin: false,
@@ -13,6 +13,7 @@ const vue = Vue.createApp({
     },
     async created() {
         this.items = await (await fetch('http://localhost:8080/items')).json();
+        localStorage.setItem('items', JSON.stringify(this.items))
         this.admin = await (await fetch('http://localhost:8080/power')).json();
         if (this.admin == true) {
             document.querySelector("#login").style.display = "none";
@@ -83,6 +84,7 @@ const vue = Vue.createApp({
             for (let i = 0; i < this.items.length; i++) {
                 this.items[i].id = i + 1
             }
+            localStorage.setItem('items', JSON.stringify(this.items))
         },
         updateItem: async function () {
             this.updateModal.name = this.items[this.activeId - 1].name
@@ -108,9 +110,11 @@ const vue = Vue.createApp({
         },
         insertItem: function (itemData) {
             this.items.push(itemData)
+            localStorage.setItem('items', JSON.stringify(this.items))
         },
         modifyItem: function (itemData) {
             this.items[itemData.id - 1] = itemData
+            localStorage.setItem('items', JSON.stringify(this.items))
         }
     }
 }).mount('#app')
