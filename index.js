@@ -15,18 +15,12 @@ const httpsServer = https.createServer({
         console.log(`API up at: https://localhost:${port}`)
 });
 
-var connect = require('connect');
-var serveStatic = require('serve-static');
-
-connect()
-    .use(serveStatic(__dirname))
-    .listen(8081, () => console.log('Page running at: http://localhost:8081/index.html'));
-
 var expressWs = require('express-ws')(app, httpsServer)
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 app.use(cors());
 app.use(express.json())
+app.use(express.static(__dirname));
 
 var items = [
     { id: 1, name: "Tool", price: "6.99", description: "Tammepuidust tool" },

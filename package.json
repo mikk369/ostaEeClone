@@ -1,12 +1,10 @@
 {
   "dependencies": {
-    "connect": "^3.7.0",
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "express-ws": "^5.0.2",
     "google-auth-library": "^8.7.0",
     "query-string": "^7.1.1",
-    "serve-static": "^1.15.0",
     "vue": "^3.2.38",
     "websocket": "^1.0.34",
     "ws": "^8.8.1"
