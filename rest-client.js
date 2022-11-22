@@ -104,8 +104,7 @@ const vue = Vue.createApp({
                     let signInMsg = document.getElementById("si-error-msg")
                     if (data.error){
                         signInMsg.textContent = (data.error)
-                    } else {
-                        console.log(data)
+                    } else if (data.isAdmin == true) {
                         localStorage.setItem('sessionId', data.sessionId)
                         localStorage.setItem('isAdmin', data.isAdmin)
                         localStorage.setItem('username', this.username)
@@ -113,6 +112,14 @@ const vue = Vue.createApp({
                         document.getElementById("logout").style.display = ""
                         document.getElementById('deleteBtn').style.display = ""
                         document.getElementById('updateBtn').style.display = ""
+                        document.getElementById('listItems').style.display = ""
+                    } else {
+                        localStorage.setItem('sessionId', data.sessionId)
+                        localStorage.setItem('isAdmin', data.isAdmin)
+                        localStorage.setItem('username', this.username)
+                        document.getElementById("login").style.display = "none"
+                        document.getElementById("logout").style.display = ""
+                        document.getElementById('listItems').style.display = ""
                     } 
                 })
         },
@@ -138,7 +145,10 @@ const vue = Vue.createApp({
                     document.getElementById("logout").style.display = "none"
                     document.getElementById('deleteBtn').style.display = "none"
                     document.getElementById('updateBtn').style.display = "none"
-                    localStorage.clear()
+                    document.getElementById('listItems').style.display = "none"
+                    localStorage.removeItem('isAdmin')
+                    localStorage.removeItem('username')
+                    localStorage.removeItem('sessionId')
                 }
             })
         }

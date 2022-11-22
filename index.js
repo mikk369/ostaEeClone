@@ -4,6 +4,8 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = 8080
+const {OAuth2Client} = require('google-auth-library')
+const OAuth2ClientInstance = new OAuth2Client('561087672076-t9b4gp8i5l4n1cv55s9a4p66a8191lnr.apps.googleusercontent.com')
 
 const httpsServer = https.createServer({
     key: fs.readFileSync("key.pem"),
@@ -12,6 +14,13 @@ const httpsServer = https.createServer({
     app).listen(port, () => {
         console.log(`API up at: https://localhost:${port}`)
 });
+
+var connect = require('connect');
+var serveStatic = require('serve-static');
+
+connect()
+    .use(serveStatic(__dirname))
+    .listen(8081, () => console.log('Page running at: http://localhost:8081/index.html'));
 
 var expressWs = require('express-ws')(app, httpsServer)
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -25,6 +34,14 @@ var items = [
     { id: 3, name: "Laud", price: "59.99", description: "Led-gamer desk" },
 ]
 
+async function getClientDataFromGoogle(token){
+    const ticket = await OAuth2ClientInstance.verifyIdToken({
+        idToken: token,
+        audience: '561087672076-t9b4gp8i5l4n1cv55s9a4p66a8191lnr.apps.googleusercontent.com'
+    });
+    return ticket.getPayload();
+}
+
 app.ws('/', function (ws, req) {
     ws.on('message', function (msg) {
         expressWs.getWss().clients.forEach(client => client.send(msg));
@@ -32,7 +49,7 @@ app.ws('/', function (ws, req) {
 });
 
 const users = [{username: "admin", password: "admin", isAdmin: true},
-{username: "user", password: "password", isAdmin: false}]
+{username: "user", password: "user", isAdmin: false}]
 
 const sessions = []
 
@@ -116,6 +133,20 @@ app.post('/sessions', (req,res) => {
         }
     }
 });
+
+app.post('/oAuth2Login', async (req, res) => {
+    try{
+        const dataFromGoogle = await getClientDataFromGoogle(req.body.credential)
+        sessionId = Math.round(Math.random() * 100000000)
+        newSession = {id: sessionId, user: dataFromGoogle.email, isAdmin: false}
+        sessions.push(newSession)
+
+        return res.status(201).send({success: true, username: dataFromGoogle.email,isAdmin: false, sessionId: sessionId})
+
+    }catch (err) {
+        return res.status(400).send({error: 'Login unsuccessful'})
+    }
+})
 
 app.post('/logout', (req, res) => {
     if (!req.body.username || !req.body.sessionId){

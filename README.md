@@ -46,7 +46,11 @@ openssl x509 -req -days 9999 -in csr.pem -signkey key.pem -out cert.pem
 
 
 ## 💨 Accessing the website
-In order to visit the website, you need to open the index.html file located in your website folder using your browser.
+
+To access the website follow this link:
+```
+http://localhost:8081/index.html
+```
 
 ## ✨ | Authors
 
