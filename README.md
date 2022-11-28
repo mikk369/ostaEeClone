@@ -49,7 +49,12 @@ openssl x509 -req -days 9999 -in csr.pem -signkey key.pem -out cert.pem
 
 To access the website follow this link:
 ```
-http://localhost:8081/index.html
+https://localhost:8080/index.html
+```
+
+Documentaion located at:
+```
+https://localhost:8080/docs/
 ```
 
 ## ✨ | Authors

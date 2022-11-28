@@ -1,0 +1,273 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "REST API",
+        "version": "1.0.0",
+        "description": ""
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "schemes": [
+        "https"
+    ],
+    "paths": {
+        "/items": {
+            "get": {
+                "tags": [
+                    "items"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/item"
+                        }
+                    }
+                },
+                "summary": "Path used to list all items",
+                "description": "The REST endpoint/path used to list zero or more `item` entities.  This path contains a `GET` and operation to perform the list task."
+            },
+            "post": {
+                "tags": [
+                    "items"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "example": "any"
+                                },
+                                "price": {
+                                    "example": "any"
+                                },
+                                "description": {
+                                    "example": "any"
+                                }
+                            }
+                        },
+                        "in": "body"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                },
+                "summary": "Path used to create new listings",
+                "description": "The REST endpoint/path used to create zero or more `item` entities.  This path contains a `POST` and operation to perform the list task."
+            }
+        },
+        "/items/{id}": {
+            "get": {
+                "tags": [
+                    "items"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/item"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "summary": "Path used to get item by ID",
+                "description": "The REST endpoint/path used to list one `item` entity by ID.  This path contains a `GET` and operation to perform the list task."
+            },
+            "put": {
+                "tags": [
+                    "items"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "example": "any"
+                                },
+                                "price": {
+                                    "example": "any"
+                                },
+                                "description": {
+                                    "example": "any"
+                                }
+                            }
+                        },
+                        "in": "body"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "summary": "Path used to edit an existing item",
+                "description": "The REST endpoint/path used to edit zero or more `item` entities.  This path contains a `PUT` and operation to perform the list task."
+            },
+            "delete": {
+                "tags": [
+                    "items"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "summary": "Path used to delete an item",
+                "description": "The REST endpoint/path used to delete zero or more `item` entities.  This path contains a `DELETE` and operation to perform the list task."
+            }
+        },
+        "/sessions": {
+            "post": {
+                "tags": [
+                    "login"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "username": {
+                                    "example": "any"
+                                },
+                                "password": {
+                                    "example": "any"
+                                }
+                            }
+                        },
+                        "in": "body"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "summary": "Path used to login",
+                "description": "Logs the user in and creates a new session"
+            }
+        },
+        "/oAuth2Login": {
+            "post": {
+                "tags": [
+                    "login"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "credential": {
+                                    "example": "any"
+                                }
+                            }
+                        },
+                        "in": "body"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                },
+                "summary": "Path used to login via Google",
+                "description": "Logs the user in via Google and creates a new session"
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "logout"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "username": {
+                                    "example": "any"
+                                },
+                                "sessionId": {
+                                    "example": "any"
+                                }
+                            }
+                        },
+                        "in": "body"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "summary": "Path used to logout",
+                "description": "Logs the user out and deletes the session"
+            }
+        }
+    },
+    "definitions": {
+        "item": {
+            "description": "",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/item"
+            },
+            "example": {
+                "id": 1,
+                "name": "Tool",
+                "price": "6.99",
+                "description": "Tammepuidust tool"
+            }
+        }
+    }
+}

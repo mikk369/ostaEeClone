@@ -5,6 +5,7 @@
     "express-ws": "^5.0.2",
     "google-auth-library": "^8.7.0",
     "query-string": "^7.1.1",
+    "swagger-ui-express": "^4.6.0",
     "vue": "^3.2.38",
     "websocket": "^1.0.34",
     "ws": "^8.8.1"

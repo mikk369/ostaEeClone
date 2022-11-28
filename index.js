@@ -3,6 +3,8 @@ const fs = require('fs');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./docs/swagger.json');
 const port = 8080
 const {OAuth2Client} = require('google-auth-library')
 const OAuth2ClientInstance = new OAuth2Client('561087672076-t9b4gp8i5l4n1cv55s9a4p66a8191lnr.apps.googleusercontent.com')
@@ -21,6 +23,8 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 app.use(cors());
 app.use(express.json())
 app.use(express.static(__dirname));
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 var items = [
     { id: 1, name: "Tool", price: "6.99", description: "Tammepuidust tool" },
