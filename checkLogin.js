@@ -7,6 +7,7 @@ function checkIfLoggedIn() {
         if (localStorage.getItem('isAdmin') == 'true') { 
             document.getElementById('deleteBtn').style.display = ""
             document.getElementById('updateBtn').style.display = ""
+            document.getElementById('logs').style.display = ""
         }	
     }
 }

@@ -21,6 +21,7 @@
                 id="login">Login</button>
             <p id="si-error-msg"></p>
             <button @click="logout()" class="btn btn-primary" id="logout" style="display: none">Logout</button>
+            <button @click="getLogs()" class="btn btn-primary" id="logs" style="display: none; margin-left: 20px;" data-bs-toggle="modal" data-bs-target="#logsModal">Logs</button>
             <p id="so-error-msg"></p>
         </div>
         <div class="modal" id="loginForm" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
@@ -98,6 +99,40 @@
                         <div class="modal-footer">
                             <button type="button" @click="finalUpdate()" class="btn btn-primary" data-bs-dismiss="modal">Update the item</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="logsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Logs</h5>
+                    <button type="button" class="btn btn-light btn-outline-dark" data-bs-dismiss="modal">
+                        <span aria-hidden="true">&times;</span></button></button>
+                </div>
+                <div class="modal-body">
+                    <table id="logsTable" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>User</th>
+                                <th>Method</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="logsContent" v-for="log in logs">
+                                <td>{{ log[0][0] }}</td>
+                                <td>{{ log[0][1] }}</td>
+                                <td>{{ log[0][2] }}</td>
+                                <td>{{ log[0][3] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
                 </div>
             </div>
         </div>

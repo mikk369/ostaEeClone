@@ -52,7 +52,7 @@ To access the website follow this link:
 https://localhost:8080/index.html
 ```
 
-Documentaion located at:
+Documentation located at:
 ```
 https://localhost:8080/docs/
 ```

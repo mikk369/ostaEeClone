@@ -253,6 +253,20 @@
                 "summary": "Path used to logout",
                 "description": "Logs the user out and deletes the session"
             }
+        },
+        "/logs": {
+            "get": {
+                "tags": [
+                    "logs"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "summary": "Path used to log actions",
+                "description": "Logs actions taken on the page"
+            }
         }
     },
     "definitions": {

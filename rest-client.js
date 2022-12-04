@@ -7,7 +7,9 @@ const vue = Vue.createApp({
             updateModal: {},
             loginModal: {},
             loginError: "",
-            activeId: null
+            activeId: null,
+            logs: []
+
         }
     },
     async created() {
@@ -34,17 +36,25 @@ const vue = Vue.createApp({
             await fetch("https://localhost:8080/items", {
                 method: "POST",
                 headers: {
+                    "Authorization": localStorage.getItem('sessionId'),
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(newItem)
             })
         },
         deleteItem: async function () {
+            var itemName = this.items[this.activeId - 1].name
+            var itemPrice = this.items[this.activeId - 1].price
             await fetch("https://localhost:8080/items/" + this.activeId, {
                 method: "DELETE",
                 headers: {
+                    "Authorization": localStorage.getItem('sessionId'),
                     "Content-Type": "application/json"
                 },
+                body: JSON.stringify({
+                    name: itemName,
+                    price: itemPrice
+                })
             })
         },
         removeItem: function (id) {
@@ -66,13 +76,16 @@ const vue = Vue.createApp({
             await fetch("https://localhost:8080/items/" + this.activeId, {
                 method: "PUT",
                 headers: {
+                    "Authorization": localStorage.getItem('sessionId'),
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     id: this.activeId,
                     name: itemName,
                     price: itemPrice,
-                    description: itemDescription
+                    description: itemDescription,
+                    oldName: this.items[this.activeId - 1].name,
+                    oldPrice: this.items[this.activeId - 1].price
                 })
             })
         },
@@ -113,6 +126,7 @@ const vue = Vue.createApp({
                         document.getElementById('deleteBtn').style.display = ""
                         document.getElementById('updateBtn').style.display = ""
                         document.getElementById('listItems').style.display = ""
+                        document.getElementById('logs').style.display = ""
                     } else {
                         localStorage.setItem('sessionId', data.sessionId)
                         localStorage.setItem('isAdmin', data.isAdmin)
@@ -146,11 +160,50 @@ const vue = Vue.createApp({
                     document.getElementById('deleteBtn').style.display = "none"
                     document.getElementById('updateBtn').style.display = "none"
                     document.getElementById('listItems').style.display = "none"
+                    document.getElementById('logs').style.display = "none"
                     localStorage.removeItem('isAdmin')
                     localStorage.removeItem('username')
                     localStorage.removeItem('sessionId')
                 }
             })
+        },
+        getLogs: async function (){
+            const getRequest = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": localStorage.getItem('sessionId')
+                },
+            }
+            await fetch(`https://localhost:8080/logs`, getRequest)
+                .then(response => response.json())
+                .then(data => {
+                    data = data;
+                    data.logs.forEach(element => {
+                        let logFields = element.match(/(\\.|[^;])+/g)
+                        let log = []
+                        const actions = [
+                            "Login",
+                            "Logout",
+                            "Item added",
+                            "Item changed",
+                            "Item removed",
+                            ]
+
+                        logFields[2] = actions[logFields[2]]
+
+                        logFields.forEach((element, index) => {
+                            if(typeof(element) == 'string'){
+                                element = element.replace(/\\;/g,';')
+                                logFields[index] = element
+                            }
+                        })
+
+                        //Pushitakse ka vana info uuesti, tekivad duplikaadid
+                        log.push(logFields)
+                        this.logs.push(log)
+                    });
+                })
         }
     }
 }).mount('#app')
