@@ -256,16 +256,30 @@
         },
         "/logs": {
             "get": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "logs"
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/logs"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "logs": [
+                                    "2022-12-04 19:31:27;admin;0;id:7357977, isAdmin:true",
+                                    "2022-12-04 19:32:30;admin;1;id:7357977, isAdmin:true"
+                                ]
+                            }
+                        }
                     }
                 },
                 "summary": "Path used to log actions",
-                "description": "Logs actions taken on the page"
+                "description": "The REST endpoint/path used to log zero or more `log` entities.  This path contains a `GET` and operation to perform the list task."
             }
         }
     },
@@ -281,6 +295,19 @@
                 "name": "Tool",
                 "price": "6.99",
                 "description": "Tammepuidust tool"
+            }
+        },
+        "logs": {
+            "description": "",
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/logs"
+            },
+            "example": {
+                "logs": [
+                    "2022-12-04 19:31:27;admin;0;id:7357977, isAdmin:true",
+                    "2022-12-04 19:32:30;admin;1;id:7357977, isAdmin:true"
+                ]
             }
         }
     }
