@@ -180,17 +180,8 @@ const vue = Vue.createApp({
                 .then(data => {
                     data = data;
                     data.logs.forEach(element => {
-                        let logFields = element.match(/(\\.|[^;])+/g)
+                        let logFields = element.match(/(\\.|[^　])+/g)
                         let log = []
-                        const actions = [
-                            "Login",
-                            "Logout",
-                            "Item added",
-                            "Item changed",
-                            "Item removed",
-                            ]
-
-                        logFields[2] = actions[logFields[2]]
 
                         logFields.forEach((element, index) => {
                             if(typeof(element) == 'string'){

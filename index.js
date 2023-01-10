@@ -27,6 +27,15 @@ app.use(express.static(__dirname));
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+Array.prototype.findById = function (id) {
+    return this.findBy('id', id)
+}
+Array.prototype.findBy = function (field, value) {
+    return this.find(function (x) {
+        return x[field] === value;
+    })
+}
+
 var items = [
     { id: 1, name: "Tool", price: "6.99", description: "Tammepuidust tool" },
     { id: 2, name: "Kapp", price: "15.55", description: "Vanamoodne kapp" },
@@ -54,39 +63,38 @@ const users = [{username: "admin", password: "admin", isAdmin: true},
 
 const sessions = []
 
-function createLog(action = {}) {
-    let date = new Date().toISOString().split('.')[0].replace("T", " ").replace("Z", "");
+function createLog(userAcc ,eventName, extraData) {
 
-    //let content = Object.keys(action).map((key) =>  + ";" + action[key]);
-    let content = []
-    Object.values(action).forEach((value) => {
-      if(typeof(value) == 'string'){
-        value = value.replace(/;/g,'\\;')
-        content.push(';' + value)
-      }else if(typeof(value) == 'object'){
-        value.forEach((element) => {
-          try{
-            element[0] = element[0].replace(/;/g,'\\;')
-          }catch(err){
-          }
-        })
-        content.push(';' + value)
-      }else{
-        content.push(';' + value)
-      }
-    })
-    if(fs.existsSync(logFile)) {
-        const writeStream = fs.createWriteStream(logFile, { flags: "a" });
-        writeStream.write(`\n${date}`);
-        content.forEach((e) => writeStream.write(`${e}`));
-        writeStream.end();
-    } else {
-        const writeStream = fs.createWriteStream(logFile, { flags: "a" });
-        writeStream.write(`${date}`);
-        content.forEach((e) => writeStream.write(`${e}`));
-        writeStream.end();
+    const timeStamp = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+
+    extraData = JSON.stringify(extraData).replace(/　/g, '\\　');
+
+    extraData = extraData.replace(/^"(.*)"$/, '$1');
+
+    fs.appendFile('./log.csv', timeStamp + '　' + userAcc + '　' + eventName + '　' + extraData + ' \r\n', function (err) {
+        if (err) throw err;
+    });
+}
+
+  function diff(obj1, obj2) {
+    //console.log(obj1, obj2)
+
+    function getUniqueKeys(obj1, obj2) {
+        let keys = Object.keys(obj1).concat(Object.keys(obj2));
+        return keys.filter(function (item, pos) {
+            return keys.indexOf(item) === pos;
+        });
     }
-  };
+    console.log(getUniqueKeys(obj1, obj2))
+    console.log(process.arch)
+    let result = {};
+    for (let k of getUniqueKeys(obj1, obj2)) {
+        if (obj1[k] !== obj2[k]) {
+            result[k] = obj2[k];
+        }
+    }
+    return result;
+}
 
 app.get('/items', async (req, res) => {
     //await delay(3000)
@@ -114,7 +122,7 @@ app.post('/items', (req, res) => {
     }
     items.push(newItem)
     expressWs.getWss().clients.forEach(client => client.send(JSON.stringify({action: "new", dd: newItem})))
-    createLog({user: obj.user, action: 2, data: `id:${newItem.id}, name:${newItem.name}, price:${newItem.price}`});
+    createLog(obj.user, "New item", `id:${newItem.id}, name:${newItem.name}, price:${newItem.price}`);
     res.status(201).send(items)
 });
 
@@ -135,7 +143,7 @@ app.post('/items', (req, res) => {
         item.id = i
         i += 1
     })
-    createLog({user: obj.user, action: 4, data: [`id:${item_id + 1}, name:${req.body.name}, price:${req.body.price}`],});
+    createLog(obj.user, "Delete item", [`id:${item_id + 1}, name:${req.body.name}, price:${req.body.price}`],);
     expressWs.getWss().clients.forEach(client => client.send(req.params.id));
     res.send("200")
 });
@@ -144,11 +152,17 @@ app.post('/items', (req, res) => {
     let auth = req.headers.authorization;
     let obj = sessions.find((o) => o.id == auth);
 
+    //let item = {id: req.body.id, name: req.body.name, price: req.body.price, description: req.body.description}
+    let original =  JSON.parse(JSON.stringify(items.findById(req.body.id)))
+    console.log(original)
     items[req.params.id -1].name = req.body.name
     items[req.params.id -1].price = req.body.price
     items[req.params.id -1].description = req.body.description
 
-    createLog({user: obj.user, action: 3, data: [`id:${req.body.id}, name:${req.body.oldName}, price:${req.body.oldPrice}, id:${req.body.id}, name:${req.body.name}, price:${req.body.price},`],});
+    let newChange = items.findById(req.body.id)
+    console.log(newChange)
+    console.log(diff(original, newChange))
+    createLog(obj.user, "Update item", diff(original, newChange))
     expressWs.getWss().clients.forEach(client => client.send(JSON.stringify({action: "edit", dd: req.body})))
     res.send("200")
 });
@@ -168,7 +182,7 @@ app.post('/sessions', (req,res) => {
                 sessionId = Math.round(Math.random() * 100000000)
                 session = {id: sessionId, user: req.body.username, isAdmin: checkAdmin}
                 sessions.push(session)
-                createLog({user: session.user, action: 0, data: `id:${session.id}, isAdmin:${session.isAdmin}`,});
+                createLog(session.user ,"Login", `id:${session.id}, isAdmin:${session.isAdmin}`,);
             }
         });
         if (userMatched == 0){
@@ -186,7 +200,7 @@ app.post('/oAuth2Login', async (req, res) => {
         sessionId = Math.round(Math.random() * 100000000)
         newSession = {id: sessionId, user: dataFromGoogle.email, isAdmin: false}
         sessions.push(newSession)
-        createLog({user: newSession.user, action: 0, data: `id:${sessionId}, isAdmin:${newSession.isAdmin}`,});
+        createLog(newSession.user, "Login", `id:${sessionId}, isAdmin:${newSession.isAdmin}`,);
 
         return res.status(201).send({success: true, username: dataFromGoogle.email,isAdmin: false, sessionId: sessionId})
 
@@ -202,7 +216,7 @@ app.post('/logout', (req, res) => {
         sessions.forEach((element) => {
             if (element.user == req.body.username || element.id == req.body.sessionId) {
                 sessions.splice(element)
-                createLog({user: element.user, action: 1, data: `id:${element.id}, isAdmin:${element.isAdmin}`,});
+                createLog(element.user ,"Logout", `id:${element.id}, isAdmin:${element.isAdmin}`,);
                 return res.status(201).send({success: true})
             } else {
                 return res.status(401).send({error: "Invalid sessionId or username"})
