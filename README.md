@@ -2,7 +2,7 @@
 
 ## 📜 | About
 
-This website is a primitive clone of the website Osta.ee . The website is made purely for learning purposes. The purpose of making this website is to teach us about User Stories & Web Development.
+This website is a very primitive clone of the website Osta.ee . The website is made purely for learning purposes. The purpose of making this website is to teach us about User Stories & RESTful APIs.
 
 ## 🚧 Prerequisites & Tutorial:
 
