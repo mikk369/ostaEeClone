@@ -59,4 +59,4 @@ https://localhost:8080/docs/
 
 ## ✨ | Authors
 
-* **Chris Erman** - [UwUBeebi](https://github.com/UwUBeebi)
+* **Chris Erman** - [Beps-s](https://github.com/Beps-s)
